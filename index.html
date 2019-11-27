@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Voteaza!</title>
+	<link rel="icon" href="img/favicon.png">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link href="css/cover.css" rel="stylesheet">
+</head>
+<body>
+
+	<main role="main" class="container">
+		<div class="starter-template">
+			<h1>Votăm. Pentru că Democrație.</h1>
+			<p class="lead">
+				voteaza.aristotel.md găzduiește în acest moment o sesiune de alegeri.<br> 
+				Vă rugăm să vă expuneți părerea prin selectarea unei opțiuni de mai jos.
+			</p>
+<!-- 			<ul class="countdown mt-2 h5">
+				<li>
+					<span class="h6 days">00</span>
+					<p class="days_ref">days</p>
+				</li>
+				<li class="seperator">.</li>
+				<li>
+					<span class="h6 hours">00</span>
+					<p class="hours_ref">hours</p>
+				</li>
+				<li class="seperator">:</li>
+				<li>
+					<span class="h6 minutes">00</span>
+					<p class="minutes_ref">minutes</p>
+				</li>
+				<li class="seperator">:</li>
+				<li>
+					<span class="h6 seconds">00</span>
+					<p class="seconds_ref">seconds</p>
+				</li>
+			</ul> -->
+		</div>
+	</main>
+
+	<section class="quiz">
+		<div class="container">
+			<form method="POST" id="uniq_form">
+				<div class="row">
+					<div class="card col-sm-4 offset-sm-1 mx-5 my-3 m-sm-auto">
+						<img class="card-img-top mt-2 rounded-circle" src="img/hai5.jpg">
+						<div class="card-body funkyradio">
+							<h4 class="card-title text-center text-body">Hai FAIV</h4>
+							<div class="funkyradio-success text-body">
+								<input type="radio" name="partid" value="partid1" id="partid1" />
+								<label for="partid1">VOTEAZĂ</label>
+							</div>
+						</div>
+					</div>
+					<div class="card col-sm-4 offset-sm-2 mx-5 my-3 m-sm-auto">
+						<img class="card-img-top mt-2 rounded-circle" src="img/ois.jpg">
+						<div class="card-body funkyradio">
+							<h4 class="card-title text-center text-body">Owls in Suits</h4>
+							<div class="funkyradio-success text-body">
+								<input type="radio" name="partid" value="partid2" id="partid2" />
+								<label for="partid2">VOTEAZĂ</label>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group p-5 my-3 inp mx-auto">
+					<label for="cod_personal">Codul personal</label>
+					<input required="" type="text" class="form-control" name="cod_personal" id="cod_personal" aria-describedby="codHelp" placeholder="Introduceti codul">
+					<small id="codHelp" class="form-text text-muted">Codul personal a fost trimis pe adresa de email oferită anterior.</small>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-primary b1 d-none" type="button" disabled>
+						<span class="spinner-border" role="status" aria-hidden="true"></span>
+						<span class="sr-only">Loading...</span>
+					</button>
+					<input class="btn btn-primary b2" id="form_submit" type="submit" value="Submit">
+				</div>
+			</form>
+		</div>
+	</section>
+
+
+
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="js/jquery.downCount.js"></script>
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+			$("#form_submit").on("click", function(e) {
+				$('#form_submit').popover('dispose');
+
+				if (!$('form')[0].checkValidity()) return 0;
+				else e.preventDefault();
+
+				if (!$("input[name='partid']").is(":checked")) {
+					$('#form_submit').popover({
+						content: `<h4>Alegeți un senat!</h4>`,
+						html: true,
+						placement: "bottom"
+					});
+					$('#form_submit').popover('show');
+					return 0;
+				}
+
+				$('.b1').removeClass('d-none');
+				$('.b2').addClass('d-none');
+				$.post("/code.php", $("#uniq_form").serialize(), function(data, status) {
+					$('.b2').removeClass('d-none');
+					$('.b1').addClass('d-none');
+					if (status == "success") {
+						if (data == "good") {
+							$('#form_submit').popover({
+								content: `<h4>Votat!</h4>`,
+								html: true,
+								placement: "bottom"
+							});
+							setTimeout(function(){
+								$('#form_submit').popover('dispose');
+							}, 3000);
+						} else {
+							$('#form_submit').popover({
+								content: "<h4 style='text-align: center;'>"+data+"</h4>",
+								html: true,
+								placement: "bottom"
+							});
+							setTimeout(function(){
+								$('#form_submit').popover('dispose');
+							}, 6000);
+						}
+					} else {
+						$('#form_submit').popover({
+							content: "Eroare! Incercati mai tarziu"
+						});
+					}
+					$('#form_submit').popover('show');
+				});
+			});
+
+
+			// $('.countdown').downCount({
+			// 	date: '11/27/2019 8:00:00',
+			// 	offset: +2
+			// }, function () {
+			// 	$('.countdown').hide();
+			// 	$('.quiz').removeClass('d-none');
+			// });
+		});
+
+	</script>
+
+</body>
+</html>
